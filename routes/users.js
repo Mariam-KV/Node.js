@@ -7,10 +7,13 @@ const {
   login,
   getByUserId,
 } = require("../controllers/users");
+const fileUpload = require("../middleware/file-upload");
 router.get("/", getusers);
 router.get("/id/:userID", getByUserId);
 router.post(
   "/signup",
+  //a middleware to retrieve a single file
+  fileUpload.single("image"),
   check("email").isEmail(),
   // check("password").isStrongPassword(),
   signup
