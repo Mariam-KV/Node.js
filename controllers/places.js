@@ -39,6 +39,9 @@ const patchPlacesById = async (req, res, next) => {
     return next(new httpError("Couldn't update a place", 500));
   }
 
+  if (place.creator.toString() !== req.userData.userId) {
+    return next(new httpError("You're not allowed to update this place", 401));
+  }
   res.json({ place: place.toObject({ getters: true }) });
 };
 const deletePlacesById = async (req, res, next) => {
@@ -47,10 +50,16 @@ const deletePlacesById = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    place = await Place.findByIdAndDelete(placeId).populate("creator");
-
-    //pull will remove an id
+    place = await Place.findById(placeId).populate("creator");
     let creator = place.creator;
+
+    if (creator.id.toString() !== req.userData.userId) {
+      return next(
+        new httpError("You're not allowed to delete this place", 401)
+      );
+    }
+    //pull will remove an id
+    place = await Place.findByIdAndDelete(placeId).populate("creator");
     creator.places.pull(place);
     await creator.save({ session: sess });
     await sess.commitTransaction();
@@ -69,7 +78,7 @@ const createPlace = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return next(new httpError("invalid input", 422));
   }
-  const { title, description, creator, address } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates;
   try {
@@ -84,12 +93,12 @@ const createPlace = async (req, res, next) => {
     location: coordinates,
     address,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   });
   let user;
   try {
     //if id of user is existed
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch {
     const error = new httpError(
       "Creating place failed ,please try again.",

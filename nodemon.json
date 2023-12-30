@@ -1,0 +1,9 @@
+{
+  "env": {
+    "DB_USER": "marikanik1999",
+    "DB_Password": "marikanik1999",
+    "DB_NAME": "mern",
+    "GOOGLE_API_KEY": "AIzaSyDnHByr3nPfOG5rD7DFOlnqs_-mgk5cpyI",
+    "JWT_KEY": "supersecret_don't_share"
+  }
+}

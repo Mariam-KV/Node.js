@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyDnHByr3nPfOG5rD7DFOlnqs_-mgk5cpyI";
+const API_KEY = process.env.GOOGLE_API_KEY;
 const httpError = require("../models/http-error");
 async function getCoordsForAdress(address) {
   const res = await fetch(
