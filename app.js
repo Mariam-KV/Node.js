@@ -50,16 +50,16 @@ const options = {
   useNewUrlParser: true, // Use new URL parser
   useUnifiedTopology: true, // Use new Server Discover and Monitoring engine
 };
+;
+
 mongoose
   .connect(
-    `mongodb+srv://marikanik1999:marikanik1999@marikanik1999.rkm1dfu.mongodb.net/mern?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_USER}.rkm1dfu.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     options
   )
   .then(() => {
     app.listen(5000);
-
   })
   .catch((err) => {
     console.log(err);
-   
   });
